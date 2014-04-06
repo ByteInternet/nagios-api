@@ -164,6 +164,36 @@ def http_service(req, objid, reqobj):
                 ret[service][service_key] = value
     return json_response(req, ret)
 
+#  
+#  WIP
+# 
+
+def http_reload_nagios(req, objid, reqobj):
+    ''' Reload the nagios config by sending a kill -HUP to the process '''
+    if objid is not None:
+        return json_error(req, 'Unexpected object ID.')
+    return json_response(req, None)
+
+
+def http_verify_config(req, objid, reqobj): 
+    ''' Verify the config by running the nagios or icinga binary 
+    with the -v flag followed by the nagios or icinga config file in 
+    '''
+    if objid is not None:
+        return json_error(req, 'Unexpected object ID.')
+    return json_response(req, None)
+
+
+def http_rebuild_nagios_config(req, objid, reqobj):
+    ''' Rebuild the nagios running the rebuild config script in 
+    /etc/nagios3/scripts - TODO - make the script running as a restricted user
+    '''
+    if objid is not None:
+        return json_error(req, 'Unexpected object ID.')
+    return json_response(req, None)
+
+
+# _________________________________________________________________
 
 def http_log(req, objid, reqobj):
     '''Return the recent Nagios log entries. This is useful if you just
