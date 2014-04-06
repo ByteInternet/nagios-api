@@ -165,6 +165,33 @@ def http_service(req, objid, reqobj):
     return json_response(req, ret)
 
 
+def http_problems(req, objid, reqobj):
+    """Return nagios services that are not in OK state.
+    When monitoring real-time issues with the API.
+    """
+    global NAGIOS
+    ret = {}
+    if not objid:
+        for host in NAGIOS.services.keys():
+            for service in NAGIOS.services[host]:
+                services = {service: {}}
+                service_keys = [x for x in dir(NAGIOS.services[host][service]) if not x.startswith('__')]
+                # Filter out everything but services
+                for service_key in service_keys:
+                    value = getattr(NAGIOS.services[host][service], service_key)
+                    if isinstance(value, types.StringType):
+                        services[service][service_key] = value
+                # Check if the service has an OK state integer.
+                for defined_service_key in services[service]:
+                    if isinstance(value, types.StringType) and defined_service_key == 'current_state':
+                        if not str(getattr(NAGIOS.services[host][service], 'current_state')) == "0":
+                            if not ret.__contains__(host):
+                                 ret[host] = {}
+                            for key, value in services.items():
+                                 ret[host][key] = value
+    return json_response(req, ret)
+
+
 def http_reload_config(req, objid, reqobj):
     ''' Reload the nagios config by sending a RESTART_PROGRAM to the command file '''
     if objid is not None:
@@ -746,6 +773,7 @@ def http_handler(req):
     dispatch = {
         'GET': {
             'log': http_log,
+            'problems': http_problems,
             'verify_config': http_verify_config,
             'rebuild_config': http_rebuild_config,
             'reload_config': http_reload_config,
