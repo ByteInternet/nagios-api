@@ -1,4 +1,3 @@
-import sys
 import logging
 import logging.handlers
 import subprocess
@@ -43,12 +42,4 @@ def run_command(command):
         log.info('%s - %s' % (__name__, nextline.strip()))
     exitcode = process.returncode
     log.info('Exitcode for %s was %s' % (command, exitcode))
-    return(str(output), exitcode)
-
-
-def nagios_or_icinga():
-    pass
-
-
-def get_monitoring_pid():
-    pass
+    return(output, exitcode)
