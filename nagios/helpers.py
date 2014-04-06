@@ -25,6 +25,19 @@ def logger():
     return LOGOBJECT
 
 
+def get_stats():
+    ''' Get icinga statistics in json format using the icingastats binary'''
+    stats = {}
+    output, exitcode = run_command("""/usr/sbin/icingastats | sed -e '1,9d' -e 's/  */ /g' -e 's/^\ //g' -e '/^$/d'""")
+    if exitcode != 0:
+        return { 'output': output, 'exitcode': exitcode }
+    for line in output:
+        key, value = line.split(':')
+        newkey = key.replace(' ', '_').lower()
+        stats[newkey] = value.strip().lstrip()
+    return stats
+
+
 def run_command(command):
     ''' Run a shell command and get the output and exit code 
         while the output is send to both logging and returned. 

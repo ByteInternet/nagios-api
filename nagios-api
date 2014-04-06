@@ -165,7 +165,7 @@ def http_service(req, objid, reqobj):
     return json_response(req, ret)
 
 
-def http_reload_nagios(req, objid, reqobj):
+def http_reload_config(req, objid, reqobj):
     ''' Reload the nagios config by sending a RESTART_PROGRAM to the command file '''
     if objid is not None:
         return json_error(req, 'Unexpected object ID.')
@@ -202,6 +202,16 @@ def http_rebuild_config(req, objid, reqobj):
         return json_error(req, msg) 
     else:
         return json_response(req, msg)
+
+
+def http_stats(req, objid, reqobj):
+    if objid is not None:
+        return json_error(req, 'Unexpected object ID.')
+    try:
+        stats = helpers.get_stats()
+    except Exception as e:
+        return json_error(req, { 'Error': e, 'msg': 'Failed getting stats'}) 
+    return json_response(req, stats)
 
 
 def http_log(req, objid, reqobj):
@@ -738,7 +748,8 @@ def http_handler(req):
             'log': http_log,
             'verify_config': http_verify_config,
             'rebuild_config': http_rebuild_config,
-            'reload_nagios': http_reload_nagios,
+            'reload_config': http_reload_config,
+            'stats': http_stats,
             'state': http_state,
             'objects': http_objects,
             'host': http_host,
