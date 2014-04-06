@@ -12,7 +12,7 @@ def logger():
         return LOGOBJECT
 
     formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)-7s %(message)s")
-    log = logging.getLogger(name='byte-vpn-sync-users')
+    log = logging.getLogger(name=__name__)
     log.setLevel(logging.DEBUG)
 
     # logging to std err
@@ -31,7 +31,8 @@ def run_command(command):
     '''
     output = []
     log = logger()
-    process = subprocess.Popen(command.split(), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    log.info('Command = %s' % command)
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while True:
         nextline = process.stdout.readline()
         if nextline == '' and process.poll() != None:

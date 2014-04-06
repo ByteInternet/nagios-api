@@ -182,7 +182,7 @@ def http_verify_config(req, objid, reqobj):
     '''
     if objid is not None:
         return json_error(req, 'Unexpected object ID.')
-    output, exitcode = helpers.run_command('/usr/sbin/icinga -v /etc/icinga/icinga.cfg')
+    output, exitcode = helpers.run_command('/usr/sbin/icinga -v /etc/nagios3/nagios.cfg')
     msg = { 'exitcode': exitcode, 'output': output }
     if exitcode != 0:
         return json_error(req, msg) 
@@ -736,8 +736,8 @@ def http_handler(req):
     dispatch = {
         'GET': {
             'log': http_log,
-            'http_verify_config': http_verify_config,
-            'http_rebuild_config': http_rebuild_config,
+            'verify_config': http_verify_config,
+            'rebuild_config': http_rebuild_config,
             'reload_nagios': http_reload_nagios,
             'state': http_state,
             'objects': http_objects,
