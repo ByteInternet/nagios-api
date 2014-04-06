@@ -15,7 +15,6 @@ contributors. See the LICENSE file for full licensing information.
 '''
 
 
-import datetime
 import os
 import re
 import sys
@@ -31,6 +30,7 @@ from diesel.util.lock import synchronized
 from diesel.protocols import http
 from json import dumps
 from nagios import Comment, Downtime, Nagios
+from nagios import helpers
 from werkzeug.exceptions import BadRequest
 from signal import signal, SIGTERM
 
@@ -164,36 +164,45 @@ def http_service(req, objid, reqobj):
                 ret[service][service_key] = value
     return json_response(req, ret)
 
-#  
-#  WIP
-# 
 
 def http_reload_nagios(req, objid, reqobj):
-    ''' Reload the nagios config by sending a kill -HUP to the process '''
+    ''' Reload the nagios config by sending a RESTART_PROGRAM to the command file '''
     if objid is not None:
         return json_error(req, 'Unexpected object ID.')
-    return json_response(req, None)
+
+    if not send_nagios_command('RESTART_PROGRAM', ''):
+        return json_error(req, 'Failed sending reload command to Nagios.')
+    else:
+        return json_response(req, 'Reload send')
 
 
 def http_verify_config(req, objid, reqobj): 
-    ''' Verify the config by running the nagios or icinga binary 
-    with the -v flag followed by the nagios or icinga config file in 
+    ''' Verify the config by running the icinga binary 
+    with the -v flag followed by the icinga config file in 
     '''
     if objid is not None:
         return json_error(req, 'Unexpected object ID.')
-    return json_response(req, None)
+    output, exitcode = helpers.run_command('/usr/sbin/icinga -v /etc/icinga/icinga.cfg')
+    msg = { 'exitcode': exitcode, 'output': output }
+    if exicode != 0:
+        return json_error(req, msg) 
+    else:
+        return json_response(req, msg)
 
 
-def http_rebuild_nagios_config(req, objid, reqobj):
+def http_rebuild_config(req, objid, reqobj):
     ''' Rebuild the nagios running the rebuild config script in 
     /etc/nagios3/scripts - TODO - make the script running as a restricted user
     '''
     if objid is not None:
         return json_error(req, 'Unexpected object ID.')
-    return json_response(req, None)
+    output, exitcode = helpers.run_command('sudo /etc/icinga/scripts/nagios_create_hostscfg-ng.pl')
+    msg = { 'exitcode': exitcode, 'output': output }
+    if exicode != 0:
+        return json_error(req, msg) 
+    else:
+        return json_response(req, msg)
 
-
-# _________________________________________________________________
 
 def http_log(req, objid, reqobj):
     '''Return the recent Nagios log entries. This is useful if you just
@@ -729,6 +738,9 @@ def http_handler(req):
     dispatch = {
         'GET': {
             'log': http_log,
+            'http_verify_config': http_verify_config,
+            'http_rebuild_config': http_rebuild_config,
+            'reload_nagios': http_reload_nagios,
             'state': http_state,
             'objects': http_objects,
             'host': http_host,
@@ -823,6 +835,7 @@ def read_log(logfile):
             NLOG = NLOG[-1000:]  # Keep the most recent 1k lines.
     f.close()  # Useless?
 
+
 def write_pid():
     '''Write pid file
 
@@ -838,6 +851,7 @@ def write_pid():
             sys.stderr.write("%s\n" % e)
             sys.stderr.write("Unable to write pid file: %s\n" % PID_FILE)
             sys.exit(1)
+
 
 def main(argv):
     '''A simple REST API for Nagios3.
