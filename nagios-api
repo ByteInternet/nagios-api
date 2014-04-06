@@ -184,7 +184,7 @@ def http_verify_config(req, objid, reqobj):
         return json_error(req, 'Unexpected object ID.')
     output, exitcode = helpers.run_command('/usr/sbin/icinga -v /etc/icinga/icinga.cfg')
     msg = { 'exitcode': exitcode, 'output': output }
-    if exicode != 0:
+    if exitcode != 0:
         return json_error(req, msg) 
     else:
         return json_response(req, msg)
@@ -198,7 +198,7 @@ def http_rebuild_config(req, objid, reqobj):
         return json_error(req, 'Unexpected object ID.')
     output, exitcode = helpers.run_command('sudo /etc/icinga/scripts/nagios_create_hostscfg-ng.pl')
     msg = { 'exitcode': exitcode, 'output': output }
-    if exicode != 0:
+    if exitcode != 0:
         return json_error(req, msg) 
     else:
         return json_response(req, msg)
@@ -239,7 +239,6 @@ def http_disable_notifications(req, objid, reqobj):
     if obj is None:
         return json_error(req, 'Host or service not found.')
 
-    now = int(time.time())
     if obj.service is not None:
         if not send_nagios_command('DISABLE_SVC_NOTIFICATIONS', host, service):
             return json_error(req, 'Failed sending command to Nagios.')
@@ -273,7 +272,6 @@ def http_enable_notifications(req, objid, reqobj):
     if obj is None:
         return json_error(req, 'Host or service not found.')
 
-    now = int(time.time())
     if obj.service is not None:
         if not send_nagios_command('ENABLE_SVC_NOTIFICATIONS', host, service):
             return json_error(req, 'Failed sending command to Nagios.')
@@ -803,8 +801,8 @@ def read_status(statusfile):
         if mtime is None or stat.st_mtime > mtime:
             try:
                NAGIOS = Nagios(statusfile)
-            except ValueError,e:
-                print "You appear to have handed me a malformed status file - possibly the state retention file. Please check your arguments and try again."
+            except ValueError as e:
+                print "You appear to have handed me a malformed status file - possibly the state retention file. Please check your arguments and try again. Error was %s" % e
                 sys.exit(-1)
             mtime = stat.st_mtime
         sleep(1)
