@@ -1,4 +1,5 @@
 nagios-api
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ==========
 
 
@@ -131,50 +132,45 @@ method is specified as a URL and may include an integer component on the
 path. Most data is passed as JSON objects in the body of a POST.
 
 
-http_host_status
-~~~~~~~~~~~~~~~~~~~
-
-Print a detailed host object containing all it's services and their stati. 
+/api/host_status/<hostname>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Print a detailed host object containing all it's services and their stati. 
 Uses the livestatus socket, so this is realtime data.
 
 
-http_problems
-~~~~~~~~~~~~~~~~~~~
-
-Prints all hosts that have not all services in status "OK"
-
-
-http_reload_config
-~~~~~~~~~~~~~~~~~~~
-
-Reload the nagios configuration by sending the reload command to the daemon
+/api/problems
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Prints all hosts that have not all services in status "OK"
 
 
-http_verify_config
-~~~~~~~~~~~~~~~~~~~
-
-Verify the configuration for erros by running icinga -v configfile 
-
-http_rebuild_config
-~~~~~~~~~~~~~~~~~~~
-
-Rebuild a config file by running the nagios_create_hostconfig-ng script
-
-http_hostgroups
-~~~~~~~~~~~~~~~~~~~
-
-Print all hostgroups and the amount of hosts containing it
-
-http_stats
-~~~~~~~~~~~~~~~~~~~
-
-Print daemon stats from the output of icingastats binary
+/api/reload_config
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Reload the nagios configuration by sending the reload command to the daemon
 
 
+/api/verify_config
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Verify the configuration for erros by running icinga -v configfile 
 
-acknowledge_problem
-~~~~~~~~~~~~~~~~~~~
-This method allows you to acknowledge a given problem on a host or service.
+
+/api/rebuild_config
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Rebuild a config file by running the nagios_create_hostconfig-ng script
+
+
+/api/hostgroups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Print all hostgroups and the amount of hosts containing it
+
+
+/api/stats
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Print daemon stats from the output of icingastats binary
+
+
+/api/acknowledge_problem
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* This method allows you to acknowledge a given problem on a host or service.
 
 *host*='STRING' [required]::
     Which host to act on.
@@ -204,9 +200,10 @@ This method allows you to acknowledge a given problem on a host or service.
     Optional. The name of the author. This is useful in UIs if you want
     to disambiguate who is doing what.
 
-add_comment
-~~~~~~~~~~~
-For a given host and/or service, add a comment. This is free-form text that can
+
+/api/add_comment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* For a given host and/or service, add a comment. This is free-form text that can
 include whatever you want and is visible in the Nagios UI and API output.
 
 *host*='STRING' [required]::
@@ -228,9 +225,10 @@ include whatever you want and is visible in the Nagios UI and API output.
     Optional. The name of the author. This is useful in UIs if you want
     to disambiguate who is doing what.
 
-cancel_downtime
-~~~~~~~~~~~~~~~
-Very simply, this immediately lifts a downtime that is currently in
+
+/api/cancel_downtime
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Very simply, this immediately lifts a downtime that is currently in
 effect on a host or service. If you know the `downtime_id`, you can
 specify that as a URL argument like this:
 
@@ -252,9 +250,10 @@ cancel by host/service as well.
     specific, then we will cancel all downtimes on this host and all of
     the services it has.
 
-disable_notifications
-~~~~~~~~~~~~~~~~~~~~~
-This disables alert notifications on a host or service. (As an operational
+
+/api/disable_notifications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* This disables alert notifications on a host or service. (As an operational
 note, you might want to schedule downtime instead. Disabling notifications
 has a habit of leaving things off and people forgetting about it.)
 
@@ -264,9 +263,10 @@ has a habit of leaving things off and people forgetting about it.)
 *service*='STRING'::
     Optional. If specified, act on this service.
 
-delete_comment
-~~~~~~~~~~~~~~
-Deletes comments from a host or service. Can be used to delete all comments or
+
+/api/delete_comment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Deletes comments from a host or service. Can be used to delete all comments or
 just a particular comment.
 
 *host*='STRING' [required]::
@@ -279,9 +279,10 @@ just a particular comment.
     The ID of the comment you wish to delete. You may set this to -1 to delete
     all comments on the given host or service.
 
-enable_notifications
-~~~~~~~~~~~~~~~~~~~~
-This enables alert notifications on a host or service.
+
+/api/enable_notifications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* This enables alert notifications on a host or service.
 
 *host*='STRING' [required]::
     Which host to act on.
@@ -289,21 +290,24 @@ This enables alert notifications on a host or service.
 *service*='STRING'::
     Optional. If specified, act on this service.
 
-log
-~~~
-Simply returns the most recent 1000 items in the Nagios event log. These
+
+/api/log
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Simply returns the most recent 1000 items in the Nagios event log. These
 are currently unparsed. There is a plan to parse this in the future and
 return event objects.
 
-objects
-~~~~~~~
-Returns a dict with the key being hostnames and the values being a list
+
+/api/objects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Returns a dict with the key being hostnames and the values being a list
 of services defined for that host. Use this method to get the contents
 of the world -- i.e., all hosts and services.
 
-remove_acknowledgement
-~~~~~~~~~~~~~~~~~~~~~~
-This method cancels an acknowledgement on a host or service.
+
+/api/remove_acknowledgement
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* This method cancels an acknowledgement on a host or service.
 
 *host*='STRING' [required]::
     Which host to act on.
@@ -311,9 +315,10 @@ This method cancels an acknowledgement on a host or service.
 *service*='STRING'::
     Optional. If specified, act on this service.
 
-schedule_check
-~~~~~~~~~~~~~~
-This API lets you schedule a check for a host or service. This also allows
+
+/api/schedule_check
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* This API lets you schedule a check for a host or service. This also allows
 you to force a check.
 
 *host*='STRING' [required]::
@@ -337,9 +342,9 @@ you to force a check.
     single line of text, normally returned by checkers.
 
 
-schedule_downtime
-~~~~~~~~~~~~~~~~~
-This general purpose method is used for creating fixed length downtimes.
+/api/schedule_downtime
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* This general purpose method is used for creating fixed length downtimes.
 This method can be used on hosts and services. You are allowed to
 specify the author and comment to go with the downtime, too. The JSON
 parameters are:
@@ -374,16 +379,18 @@ We do not have the ability to get the `downtime_id` that is generated,
 unfortunately, as that would require waiting for Nagios to regenerate
 the status file.
 
-state
-~~~~~
-This method takes no parameters. It returns a large JSON object
+
+/api/state
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* This method takes no parameters. It returns a large JSON object
 containing all of the active state from Nagios. Included are all hosts,
 services, downtimes, comments, and other things that may be in the
 global state object.
 
-submit_result
-~~~~~~~~~~~~~
-If you are using passive service checks or you just want to submit a
+
+/api/submit_result
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* If you are using passive service checks or you just want to submit a
 result for a check, you can use this method to submit your result to
 Nagios.
 
@@ -411,6 +418,8 @@ AUTHOR
 ------
 Written by Mark Smith <mark@qq.is> while under the employ of Bump
 Technologies, Inc.
+
+updated By Flip Hess for all the Byte customizations :) 2014
 
 
 COPYING
