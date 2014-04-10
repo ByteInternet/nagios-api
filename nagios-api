@@ -21,6 +21,7 @@ import sys
 import time
 import types
 import atexit
+import pynag.Parsers
 from gzip import GzipFile
 from StringIO import StringIO
 from optparse import OptionParser
@@ -142,6 +143,21 @@ def http_host(req, objid, reqobj):
         ret['services'] = []
         for svc in NAGIOS.services[objid]:
             ret['services'].append(svc)
+    return json_response(req, ret)
+
+
+def http_host_status(req, objid, reqobj):
+    '''Get the livestatus of a single host.
+    Shows all of the variables for the mk-livestatus host object.
+    '''
+    global LIVESTATUS
+
+    if not objid:
+        return json_error(req, 'No hostname provided.')
+    try:
+        ret = LIVESTATUS.get_host(objid)
+    except IndexError:
+        return json_error(req, 'Host not found.')
     return json_response(req, ret)
 
 
@@ -834,6 +850,7 @@ def read_status(statusfile):
 
     '''
     global NAGIOS
+    global LIVESTATUS
     mtime = None
     while True:
         stat = os.stat(statusfile)
@@ -845,6 +862,8 @@ def read_status(statusfile):
                 sys.exit(-1)
             mtime = stat.st_mtime
         sleep(1)
+    # get livestatus:
+    LIVESTATUS = pynag.Parsers.mk_livestatus()
 
 
 def read_log(logfile):
