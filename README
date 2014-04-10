@@ -130,6 +130,48 @@ This section is organized into methods and sorted alphabetically. Each
 method is specified as a URL and may include an integer component on the
 path. Most data is passed as JSON objects in the body of a POST.
 
+
+http_host_status
+~~~~~~~~~~~~~~~~~~~
+
+Print a detailed host object containing all it's services and their stati. 
+Uses the livestatus socket, so this is realtime data.
+
+
+http_problems
+~~~~~~~~~~~~~~~~~~~
+
+Prints all hosts that have not all services in status "OK"
+
+
+http_reload_config
+~~~~~~~~~~~~~~~~~~~
+
+Reload the nagios configuration by sending the reload command to the daemon
+
+
+http_verify_config
+~~~~~~~~~~~~~~~~~~~
+
+Verify the configuration for erros by running icinga -v configfile 
+
+http_rebuild_config
+~~~~~~~~~~~~~~~~~~~
+
+Rebuild a config file by running the nagios_create_hostconfig-ng script
+
+http_hostgroups
+~~~~~~~~~~~~~~~~~~~
+
+Print all hostgroups and the amount of hosts containing it
+
+http_stats
+~~~~~~~~~~~~~~~~~~~
+
+Print daemon stats from the output of icingastats binary
+
+
+
 acknowledge_problem
 ~~~~~~~~~~~~~~~~~~~
 This method allows you to acknowledge a given problem on a host or service.
