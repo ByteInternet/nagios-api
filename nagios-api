@@ -247,6 +247,18 @@ def http_rebuild_config(req, objid, reqobj):
         return json_response(req, msg)
 
 
+def http_hostgroups(req, objid, reqobj):
+    ''' Print the hostgroups in config and the amount of members in the hostgroup '''
+    global LIVESTATUS
+    ret = {}
+    if objid is not None:
+        return json_error(req, 'Unexpected object ID.')
+    for hostgroup in LIVESTATUS.get_hostgroups():
+        name = hostgroup['name']
+        ret[name] = hostgroup['num_hosts']
+    return json_response(req, ret)
+
+
 def http_stats(req, objid, reqobj):
     if objid is not None:
         return json_error(req, 'Unexpected object ID.')
@@ -793,6 +805,8 @@ def http_handler(req):
             'verify_config': http_verify_config,
             'rebuild_config': http_rebuild_config,
             'reload_config': http_reload_config,
+            'host_status': http_host_status,
+            'hostgroups': http_hostgroups,
             'stats': http_stats,
             'state': http_state,
             'objects': http_objects,
@@ -851,6 +865,7 @@ def read_status(statusfile):
     '''
     global NAGIOS
     global LIVESTATUS
+
     mtime = None
     while True:
         stat = os.stat(statusfile)
@@ -862,8 +877,7 @@ def read_status(statusfile):
                 sys.exit(-1)
             mtime = stat.st_mtime
         sleep(1)
-    # get livestatus:
-    LIVESTATUS = pynag.Parsers.mk_livestatus()
+        LIVESTATUS = pynag.Parsers.mk_livestatus()
 
 
 def read_log(logfile):
