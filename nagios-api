@@ -161,6 +161,51 @@ def http_host_status(req, objid, reqobj):
     return json_response(req, ret)
 
 
+def http_host_ok(req, objid, reqobj):
+    """ Verify if a host has all services in OK state
+    """
+    global LIVESTATUS
+
+    if not objid:
+        return json_error(req, 'No hostname provided.')
+    try:
+        ret = LIVESTATUS.get_host(objid)
+    except IndexError:
+        return json_error(req, 'Host not found.')
+
+    if ret.state != 0:
+        return json_error(req, 'Host is down')
+
+    return json_response(req, ret.total_services == ret.num_services_ok)
+
+
+def http_return_downtime(req, objid, reqobj):
+    """ Return the amount of downtime of a host and it's services """
+    global NAGIOS
+    if not objid:
+        return json_error(req, 'No hostname provided.')
+    elif objid not in NAGIOS.hosts.keys():
+        return json_error(req, 'Unknown hostname.')
+
+    ret = {}
+    host_keys = [ x for x in dir(NAGIOS.hosts[objid]) if not x.startswith('__') ]
+    for host_key in host_keys:
+        value = getattr(NAGIOS.hosts[objid], host_key)
+        if type(value) == types.StringType:
+            ret[host_key] = value
+        # return comment and downtime data too, if either exists
+        elif type(value) == dict:
+            for k, v in value.iteritems():
+                if isinstance( v, Comment ):
+                    ret['comment'].append( v.for_json() )
+                elif isinstance( v, Downtime ):
+                    ret['downtime'].append( v.for_json() )
+    if objid in NAGIOS.services:
+        ret['services'] = []
+        for svc in NAGIOS.services[objid]:
+            ret['services'].append(svc)
+    return json_response(req, ret)
+
 def http_service(req, objid, reqobj):
     '''Get a view of a single service on one host.
     Shows all of the variables for the host object.
