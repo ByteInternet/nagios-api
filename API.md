@@ -1,5 +1,4 @@
 # API
----
 
 This program currently supports only a subset of the Nagios API. More
 is being added as it is needed. If you need something that isn't here,
