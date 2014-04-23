@@ -174,10 +174,11 @@ def http_host_ok(req, objid, reqobj):
         return json_error(req, 'Unknown hostname.')
 
     if ret['state'] != 0:
-        return json_error(req, False)
+        return json_response(req, False)
+
     if ret['total_services'] == ret['num_services_ok']:
         return json_response(req, True)
-    return json_error(req, False)
+    return json_response(req, False)
 
 def http_host_downtime(req, objid, reqobj):
     global NAGIOS
