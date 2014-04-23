@@ -3,6 +3,7 @@
 # core Nagios classes.
 #
 
+
 class Nagios:
     '''This class represents the current state of a Nagios installation, as read
     from the status file that Nagios maintains.
@@ -83,7 +84,7 @@ class Nagios:
         for c in self.comments.itervalues():
             tmp = self.host_or_service(c.host, c.service)
             if (tmp is None):
-                # FIXME: throw something? 
+                # FIXME: throw something?
                 pass
             else:
                 tmp.attach_comment(c)
@@ -152,11 +153,20 @@ class HostOrService(NagiosObject):
         NagiosObject.__init__(self, obj)
         self.downtimes = {}
         self.comments = {}
-        self.essential_keys = ['current_state', 'plugin_output',
-            'notifications_enabled', 'last_check', 'last_notification',
-            'active_checks_enabled', 'problem_has_been_acknowledged',
-            'last_hard_state', 'scheduled_downtime_depth', 'performance_data',
-            'last_state_change', 'current_attempt', 'max_attempts']
+        self.essential_keys = [
+            'current_state',
+            'plugin_output',
+            'notifications_enabled',
+            'last_check',
+            'last_notification',
+            'active_checks_enabled',
+            'problem_has_been_acknowledged',
+            'last_hard_state',
+            'scheduled_downtime_depth',
+            'performance_data',
+            'last_state_change',
+            'current_attempt',
+            'max_attempts']
 
     def attach_downtime(self, dt):
         '''Given a Downtime object, store a record to it for lookup later.'''
@@ -165,7 +175,6 @@ class HostOrService(NagiosObject):
     def attach_comment(self, cmt):
         '''Given a Comment object, store a record to it for lookup later.'''
         self.comments[cmt.comment_id] = cmt
-
 
 
 class Host(HostOrService):
@@ -212,8 +221,15 @@ class Comment(NagiosObject):
     def __init__(self, obj):
         '''Custom build a Comment object.'''
         NagiosObject.__init__(self, obj)
-        self.essential_keys = ['comment_id', 'entry_type', 'source',
-            'persistent', 'entry_time', 'expires', 'expire_time', 'author',
+        self.essential_keys = [
+            'comment_id',
+            'entry_type',
+            'source',
+            'persistent',
+            'entry_time',
+            'expires',
+            'expire_time',
+            'author',
             'comment_data']
         self.comment_id = int(self.comment_id)
 
@@ -225,7 +241,14 @@ class Downtime(NagiosObject):
     def __init__(self, obj):
         '''Custom build a Downtime object.'''
         NagiosObject.__init__(self, obj)
-        self.essential_keys = ['downtime_id', 'entry_time', 'start_time',
-            'end_time', 'triggered_by', 'fixed', 'duration', 'author',
+        self.essential_keys = [
+            'downtime_id',
+            'entry_time',
+            'start_time',
+            'end_time',
+            'triggered_by',
+            'fixed',
+            'duration',
+            'author',
             'comment']
         self.downtime_id = int(self.downtime_id)

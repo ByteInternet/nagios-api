@@ -26,11 +26,11 @@ def logger():
 
 
 def get_stats():
-    ''' Get icinga statistics in json format using the icingastats binary'''
+    """ Get icinga statistics in json format using the icingastats binary """
     stats = {}
     output, exitcode = run_command("""/usr/sbin/icingastats | sed -e '1,9d' -e 's/  */ /g' -e 's/^\ //g' -e '/^$/d'""")
     if exitcode != 0:
-        return { 'output': output, 'exitcode': exitcode }
+        return {'output': output, 'exitcode': exitcode}
     for line in output:
         key, value = line.split(':')
         newkey = key.replace(' ', '_').lower()
@@ -39,18 +39,16 @@ def get_stats():
 
 
 def run_command(command):
-    ''' Run a shell command and get the output and exit code 
-        while the output is send to both logging and returned. 
-    '''
+    """ Run a shell command and get the output and exit code while the output is send to both logging and returned. """
     output = []
     log = logger()
     log.info('Command = %s' % command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while True:
         nextline = process.stdout.readline()
-        if nextline == '' and process.poll() != None:
+        if nextline is '' and process.poll() is not None:
             break
-        elif nextline == '\n' or nextline == '':
+        elif nextline is '\n' or nextline is '':
             continue
         output.append(nextline.strip())
         log.info('%s - %s' % (__name__, nextline.strip()))
