@@ -1,6 +1,7 @@
-
-API
+{:toc}
+# API
 ---
+
 
 This program currently supports only a subset of the Nagios API. More
 is being added as it is needed. If you need something that isn't here,
@@ -11,44 +12,42 @@ method is specified as a URL and may include an integer component on the
 path. Most data is passed as JSON objects in the body of a POST.
 
 
-`/api/host_status/<hostname>`
+## /api/host_status/<hostname>
 * Print a detailed host object containing all it's services and their stati.
 Uses the livestatus socket, so this is realtime data.
 
-
-`/api/host_ok/<hostname>`
+## /api/host_ok/<hostname>
 * Return True if all services are in OK state
 
 
-`/api/host_downtime/<hostname>`
+## /api/host_downtime/<hostname>
 * Return the host downtime. If there are multiple downtimes, it returns the one ending last
 
-
-`/api/problems`
+## /api/problems
 * Prints all hosts that have not all services in status "OK"
 
 
-`/api/reload_config`
+## /api/reload_config
 * Reload the nagios configuration by sending the reload command to the daemon
 
 
-`/api/verify_config`
+## /api/verify_config
 * Verify the configuration for erros by running icinga -v configfile
 
 
-`/api/rebuild_config`
+## /api/rebuild_config
 * Rebuild a config file by running the nagios_create_hostconfig-ng script
 
 
-`/api/hostgroups`
+## /api/hostgroups
 * Print all hostgroups and the amount of hosts containing it
 
 
-`/api/stats`
+## /api/stats
 * Print daemon stats from the output of icingastats binary
 
 
-`/api/acknowledge_problem`
+## /api/acknowledge_problem
 * This method allows you to acknowledge a given problem on a host or service.
 
 *host*='STRING' [required]::
@@ -80,7 +79,7 @@ Uses the livestatus socket, so this is realtime data.
     to disambiguate who is doing what.
 
 
-`/api/add_comment`
+## /api/add_comment
 * For a given host and/or service, add a comment. This is free-form text that can
 include whatever you want and is visible in the Nagios UI and API output.
 
@@ -104,7 +103,7 @@ include whatever you want and is visible in the Nagios UI and API output.
     to disambiguate who is doing what.
 
 
-`/api/cancel_downtime`
+## /api/cancel_downtime
 * Very simply, this immediately lifts a downtime that is currently in
 effect on a host or service. If you know the `downtime_id`, you can
 specify that as a URL argument like this:
@@ -128,7 +127,7 @@ cancel by host/service as well.
     the services it has.
 
 
-`/api/disable_notifications`
+## /api/disable_notifications
 * This disables alert notifications on a host or service. (As an operational
 note, you might want to schedule downtime instead. Disabling notifications
 has a habit of leaving things off and people forgetting about it.)
@@ -140,7 +139,7 @@ has a habit of leaving things off and people forgetting about it.)
     Optional. If specified, act on this service.
 
 
-`/api/delete_comment`
+## /api/delete_comment
 * Deletes comments from a host or service. Can be used to delete all comments or
 just a particular comment.
 
@@ -155,7 +154,7 @@ just a particular comment.
     all comments on the given host or service.
 
 
-`/api/enable_notifications`
+## /api/enable_notifications
 * This enables alert notifications on a host or service.
 
 *host*='STRING' [required]::
@@ -165,19 +164,19 @@ just a particular comment.
     Optional. If specified, act on this service.
 
 
-`/api/log`
+## /api/log
 * Simply returns the most recent 1000 items in the Nagios event log. These
 are currently unparsed. There is a plan to parse this in the future and
 return event objects.
 
 
-`/api/objects`
+## /api/objects
 * Returns a dict with the key being hostnames and the values being a list
 of services defined for that host. Use this method to get the contents
 of the world -- i.e., all hosts and services.
 
 
-`/api/remove_acknowledgement`
+## /api/remove_acknowledgement
 * This method cancels an acknowledgement on a host or service.
 
 *host*='STRING' [required]::
@@ -187,7 +186,7 @@ of the world -- i.e., all hosts and services.
     Optional. If specified, act on this service.
 
 
-`/api/schedule_check`
+## /api/schedule_check
 * This API lets you schedule a check for a host or service. This also allows
 you to force a check.
 
@@ -212,7 +211,7 @@ you to force a check.
     single line of text, normally returned by checkers.
 
 
-`/api/schedule_downtime`
+## /api/schedule_downtime
 * This general purpose method is used for creating fixed length downtimes.
 This method can be used on hosts and services. You are allowed to
 specify the author and comment to go with the downtime, too. The JSON
@@ -249,14 +248,14 @@ unfortunately, as that would require waiting for Nagios to regenerate
 the status file.
 
 
-`/api/state`
+## /api/state
 * This method takes no parameters. It returns a large JSON object
 containing all of the active state from Nagios. Included are all hosts,
 services, downtimes, comments, and other things that may be in the
 global state object.
 
 
-`/api/submit_result`
+## /api/submit_result
 * If you are using passive service checks or you just want to submit a
 result for a check, you can use this method to submit your result to
 Nagios.
