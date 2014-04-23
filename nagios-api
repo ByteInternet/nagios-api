@@ -166,7 +166,6 @@ def http_host_ok(req, objid, reqobj):
     """ Verify if a host has all services in OK state
     """
     global LIVESTATUS
-
     if not objid:
         return json_error(req, 'No hostname provided.')
     try:
@@ -174,30 +173,30 @@ def http_host_ok(req, objid, reqobj):
     except IndexError:
         return json_error(req, 'Unknown hostname.')
 
-    if ret.state != 0:
+    if ret['state'] != 0:
         return json_error(req, False)
-
-    if ret.total_services == ret.num_services_ok:
+    if ret['total_services'] == ret['num_services_ok']:
         return json_response(req, True)
     return json_error(req, False)
 
 def http_host_downtime(req, objid, reqobj):
-    """ Return the amount of downtime of a host and it's services """
     global NAGIOS
     if not objid:
         return json_error(req, 'No hostname provided.')
     elif objid not in NAGIOS.hosts.keys():
         return json_error(req, 'Unknown hostname.')
-
-    ret = {}
+    ret = []
+    longest_downtime = 0
     host_keys = [ x for x in dir(NAGIOS.hosts[objid]) if not x.startswith('__') ]
     for host_key in host_keys:
         value = getattr(NAGIOS.hosts[objid], host_key)
         if type(value) == dict:
             for k, v in value.iteritems():
                 if isinstance( v, Downtime ):
-                    ret['downtime'].append( v.for_json() )
-    return json_response(req, ret)
+                    host_downtime = v.for_json()
+                    if host_downtime['end_time'] > longest_downtime:
+                        longest_downtime = host_downtime['end_time']
+    return json_response(req, longest_downtime)
 
 def http_service(req, objid, reqobj):
     """Get a view of a single service on one host.
