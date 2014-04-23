@@ -1,7 +1,5 @@
-{:toc}
 # API
 ---
-
 
 This program currently supports only a subset of the Nagios API. More
 is being added as it is needed. If you need something that isn't here,
@@ -12,9 +10,14 @@ method is specified as a URL and may include an integer component on the
 path. Most data is passed as JSON objects in the body of a POST.
 
 
+# Options 
+
+All available options for byte flavoured nagios-api
+
 ## /api/host_status/<hostname>
 * Print a detailed host object containing all it's services and their stati.
 Uses the livestatus socket, so this is realtime data.
+
 
 ## /api/host_ok/<hostname>
 * Return True if all services are in OK state
@@ -22,6 +25,7 @@ Uses the livestatus socket, so this is realtime data.
 
 ## /api/host_downtime/<hostname>
 * Return the host downtime. If there are multiple downtimes, it returns the one ending last
+
 
 ## /api/problems
 * Prints all hosts that have not all services in status "OK"
