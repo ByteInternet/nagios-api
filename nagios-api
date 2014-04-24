@@ -32,7 +32,7 @@ from diesel.util.lock import synchronized
 from diesel.protocols import http
 from json import dumps
 from nagios import Comment, Downtime, Nagios
-from nagios import helpers
+from nagios import run_external_command
 from werkzeug.exceptions import BadRequest
 from signal import signal, SIGTERM
 
@@ -265,7 +265,7 @@ def http_verify_config(req, objid, reqobj):
     """
     if objid is not None:
         return json_error(req, 'Unexpected object ID.')
-    output, exitcode = helpers.run_command('/usr/sbin/icinga -v /etc/nagios3/nagios.cfg')
+    output, exitcode = run_external_command.run_command('/usr/sbin/icinga -v /etc/nagios3/nagios.cfg')
     msg = { 'exitcode': exitcode, 'output': output }
     if exitcode != 0:
         return json_error(req, msg)
@@ -279,7 +279,7 @@ def http_rebuild_config(req, objid, reqobj):
     """
     if objid is not None:
         return json_error(req, 'Unexpected object ID.')
-    output, exitcode = helpers.run_command('sudo /etc/icinga/scripts/nagios_create_hostscfg-ng.pl')
+    output, exitcode = run_external_command.run_command('sudo /etc/icinga/scripts/nagios_create_hostscfg-ng.pl')
     msg = { 'exitcode': exitcode, 'output': output }
     if exitcode != 0:
         return json_error(req, msg)
@@ -303,7 +303,7 @@ def http_stats(req, objid, reqobj):
     if objid is not None:
         return json_error(req, 'Unexpected object ID.')
     try:
-        stats = helpers.get_stats()
+        stats = run_external_command.get_stats()
     except Exception as e:
         return json_error(req, { 'Error': e, 'msg': 'Failed getting stats'})
     return json_response(req, stats)
