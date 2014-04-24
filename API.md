@@ -13,16 +13,16 @@ path. Most data is passed as JSON objects in the body of a POST.
 
 All available options for byte flavoured nagios-api
 
-## /api/host_status/<hostname>
+## /api/host_status/`hostname`
 * Print a detailed host object containing all it's services and their stati.
 Uses the livestatus socket, so this is realtime data.
 
 
-## /api/host_ok/<hostname>
+## /api/host_ok/`hostname`
 * Return True if all services are in OK state
 
 
-## /api/host_downtime/<hostname>
+## /api/host_downtime/`hostname`
 * Return the host downtime. If there are multiple downtimes, it returns the one ending last
 
 
@@ -281,3 +281,4 @@ Nagios.
     single line of text, normally returned by checkers.
 
 The response indicates if we successfully wrote the command to the log.
+
