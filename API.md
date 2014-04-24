@@ -8,6 +8,8 @@ This section is organized into methods and sorted alphabetically. Each
 method is specified as a URL and may include an integer component on the
 path. Most data is passed as JSON objects in the body of a POST.
 
+Base url: nagios.s%d.byte.nl % segment ;)
+
 
 # Options 
 
