@@ -46,10 +46,8 @@ def run_command(command):
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while True:
         nextline = process.stdout.readline()
-        if nextline is '' and process.poll() is not None:
+        if process.poll() is not None:
             break
-        elif nextline is '\n' or nextline is '':
-            continue
         output.append(nextline.strip())
         log.info('%s - %s' % (__name__, nextline.strip()))
     exitcode = process.returncode
