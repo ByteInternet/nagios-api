@@ -86,7 +86,7 @@ Uses the livestatus socket, so this is realtime data.
 
 ## /api/add_comment
 * For a given host and/or service, add a comment. This is free-form text that can
-include whatever you want and is visible in the Nagios UI and API output.
+include whatever you want and is visible in the Nagios UI and API output.
 
 *host*='STRING' [required]::
     Which host to act on.
@@ -211,10 +211,11 @@ you to force a check.
     check at the given time. By default, Nagios will only run the check if it
     meets the standard eligibility criteria.
 
-*output*='STRING' [required]::
-    The plugin output to be displayed in the UI and stored.  This is a
-    single line of text, normally returned by checkers.
-
+*all_services*='BOOL'::
+    If set to 1, all services for the specified
+    host will be checked. Enabling this option, will cause the service
+    parameter to be ignored, if supplied. Defaults to 0 (off).
+ 
 
 ## /api/schedule_downtime
 * This general purpose method is used for creating fixed length downtimes.
