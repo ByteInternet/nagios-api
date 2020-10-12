@@ -7,4 +7,4 @@ dnspython==1.11.1
 greenlet==0.4.0
 http-parser==0.8.1
 pyOpenSSL==0.14
-requests==1.2.0
+requests==2.20.0
